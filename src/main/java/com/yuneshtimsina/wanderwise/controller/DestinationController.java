@@ -5,6 +5,7 @@ import com.yuneshtimsina.wanderwise.service.DestinationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class DestinationController {
     private DestinationService destinationService;
 
     // Create
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createDestination(@RequestBody Destination destination) {
         try {
@@ -54,6 +56,7 @@ public class DestinationController {
     }
 
     // Update
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDestination(@PathVariable Long id, @RequestBody Destination destination) {
         try {
@@ -66,6 +69,7 @@ public class DestinationController {
     }
 
     // Delete
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDestination(@PathVariable Long id) {
         try {

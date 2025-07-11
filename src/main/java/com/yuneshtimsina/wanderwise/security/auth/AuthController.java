@@ -1,5 +1,6 @@
 package com.yuneshtimsina.wanderwise.security.auth;
 
+import com.yuneshtimsina.wanderwise.model.Role;
 import com.yuneshtimsina.wanderwise.model.User;
 import com.yuneshtimsina.wanderwise.repository.UserRepository;
 import com.yuneshtimsina.wanderwise.security.jwt.JwtUtil;
@@ -42,7 +43,9 @@ public class AuthController {
                 .interests(request.getInterests())
                 .budget(request.getBudget())
                 .preferredSeason(request.getPreferredSeason())
+                .role(Role.USER)
                 .build();
+
 
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
