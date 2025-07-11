@@ -5,6 +5,7 @@ import com.yuneshtimsina.wanderwise.dto.UserResponseDTO;
 import com.yuneshtimsina.wanderwise.model.User;
 import com.yuneshtimsina.wanderwise.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,10 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     public UserResponseDTO registerUser(UserRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
@@ -45,6 +50,22 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
         return mapToResponse(user);
+    }
+
+    public UserResponseDTO updateUser(Long id, UserRequestDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+
+        // Only update if values are provided (null-safe)
+        if (dto.getName() != null) user.setName(dto.getName());
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+        if (dto.getPassword() != null) user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        if (dto.getInterests() != null) user.setInterests(dto.getInterests());
+        if (dto.getBudget() != null) user.setBudget(dto.getBudget());
+        if (dto.getPreferredSeason() != null) user.setPreferredSeason(dto.getPreferredSeason());
+
+        User updated = userRepository.save(user);
+        return mapToResponse(updated);
     }
 
     private UserResponseDTO mapToResponse(User user) {

@@ -17,15 +17,16 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRequestDTO dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO dto) {
         try {
-            UserResponseDTO created = userService.registerUser(dto);
-            return new ResponseEntity<>(created, HttpStatus.CREATED);
+            UserResponseDTO updated = userService.updateUser(id, dto);
+            return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
 
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
