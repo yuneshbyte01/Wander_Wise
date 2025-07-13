@@ -1,0 +1,113 @@
+/* === Reset & Base Styling === */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: #eef2f5;
+    color: #2c3e50;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* === Page Heading === */
+h1 {
+    font-size: 2.5rem;
+    color: #1a2935;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* === Destination Grid === */
+#destination-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* === Destination Card === */
+.destination-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.destination-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* === Image Section === */
+.destination-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
+
+/* === Content Section === */
+.destination-card .content {
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.destination-card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: #2980b9;
+    font-weight: 600;
+}
+
+.destination-card p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.destination-card .btn-more {
+    align-self: flex-start;
+    padding: 8px 14px;
+    background-color: #2980b9;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.destination-card .btn-more:hover {
+    background-color: #1f6391;
+}
+
+/* === Responsive Tweak === */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .destination-card img {
+        height: 160px;
+    }
+}

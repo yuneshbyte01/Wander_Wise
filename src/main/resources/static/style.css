@@ -1,39 +1,151 @@
+/* Global Reset & Typography */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+}
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    margin: 20px;
-    color: #333;
-}
-
-h1 {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
     color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
-#destination-list > div {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 15px 20px;
-    margin-bottom: 20px;
+/* Container for login/register forms */
+.card {
+    max-width: 420px;
+    width: 100%;
+    padding: 2.5rem 2rem 3rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
     transition: box-shadow 0.3s ease;
 }
-
-#destination-list > div:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.card:hover {
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
 }
 
-h3 {
-    margin-top: 0;
+/* Headings and text */
+.card h1 {
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: 0.04em;
+    color: #1a2935;
+}
+.card p {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    text-align: center;
+    color: #57606a;
+}
+.card p a {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: 600;
+}
+.card p a:hover {
+    text-decoration: underline;
+}
+
+/* Input grouping */
+.input-group {
+    position: relative;
+    margin-bottom: 1.4rem;
+    display: flex;
+    align-items: center;
+}
+.input-group i {
+    position: relative; /* change from absolute to relative */
+    left: 0;
+    margin-left: 12px;
+    margin-right: 12px;
+    font-size: 18px;
+    color: #a0a8b9;
+    pointer-events: none;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* Inputs */
+.input-group input {
+    width: 100%;
+    height: 48px;
+    padding: 12px 14px; /* remove left padding since icon is outside */
+    border: 1.8px solid #d1d9e6;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #2c3e50;
+    background-color: #fafbfc;
+    transition: border-color 0.35s ease, background-color 0.35s ease;
+    font-weight: 500;
+}
+.input-group input::placeholder {
+    color: #a3b0ce;
+    font-weight: 400;
+}
+.input-group input:focus {
+    border-color: #2980b9;
+    background-color: #fff;
+    outline: none;
+}
+.input-group input:focus + i {
     color: #2980b9;
 }
 
-p {
-    line-height: 1.5;
-    margin: 8px 0;
+/* Labels for accessibility - visually hidden */
+.input-group label {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
 }
 
-strong {
-    color: #34495e;
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 14px 0;
+    margin-top: 0.8rem;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2980b9, #1f6391);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(41, 128, 185, 0.3);
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+.btn:hover,
+.btn:focus {
+    background: linear-gradient(135deg, #1f6391, #145374);
+    box-shadow: 0 8px 25px rgba(20, 83, 116, 0.5);
+    outline: none;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+    .card {
+        margin: 20px 16px;
+        padding: 2rem 1.5rem 2.5rem;
+        border-radius: 14px;
+    }
+    .card h1 {
+        font-size: 1.8rem;
+    }
+    .input-group input {
+        height: 44px;
+        padding-left: 42px;
+    }
+    .input-group i {
+        font-size: 16px;
+        left: 12px;
+    }
 }

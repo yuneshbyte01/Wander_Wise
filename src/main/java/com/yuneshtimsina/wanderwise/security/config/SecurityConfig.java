@@ -28,13 +28,18 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",       // your auth endpoints
-                                "/",              // root or home
-                                "/index.html",    // static frontend files
+                                "/auth/**",         // login/register endpoints
+                                "/",                // root
                                 "/app.js",
                                 "/style.css",
-                                "/destinations",  // permit public GET access here
-                                "/favicon.ico"
+                                "/destinations",
+                                "/favicon.ico",
+                                "/login.html",
+                                "/login.js",
+                                "/register.html",
+                                "/register.js",
+                                "/destinations.html",
+                                "/destinations.css"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -44,6 +49,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
