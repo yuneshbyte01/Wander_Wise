@@ -39,7 +39,10 @@ public class SecurityConfig {
                                 "/register.html",
                                 "/register.js",
                                 "/destinations.html",
-                                "/destinations.css"
+                                "/destinations.css",
+                                "/index.html",
+                                "/home.css",
+                                "/home.js"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
