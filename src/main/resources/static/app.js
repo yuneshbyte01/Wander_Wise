@@ -50,6 +50,7 @@ window.onload = () => {
           <div class="content">
             <h2>${dest.name}</h2>
             <p>${dest.description || "No description available."}</p>
+            <p><strong>Tags:</strong> ${Array.isArray(dest.tags) ? dest.tags.join(", ") : dest.tags || "None"}</p>
             <p><strong>Cost:</strong> NPR ${dest.averageCost}</p>
             <p><strong>Best Season:</strong> ${dest.bestSeason}</p>
             <a href="destination-details.html?id=${dest.id}" class="btn-more">Explore</a>

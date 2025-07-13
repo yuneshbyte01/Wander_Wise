@@ -58,11 +58,17 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            // 👇 Load the full user to access the ID
+            User user = userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
-            return ResponseEntity.ok(new JwtResponse(jwt));
+            // 👇 Include userId in response
+            return ResponseEntity.ok(new JwtResponse(jwt, user.getId(), user.getName(), user.getRole().name()));
         } catch (Exception e) {
-            e.printStackTrace(); // Add this to log the actual error
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
     }
@@ -88,5 +94,8 @@ public class AuthController {
     @AllArgsConstructor
     static class JwtResponse {
         private String token;
+        private Long userId;
+        private String name;
+        private String role;
     }
 }
