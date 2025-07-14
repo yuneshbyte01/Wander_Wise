@@ -49,7 +49,10 @@ public class SecurityConfig {
                                 "/recommendations.html",
                                 "/recommendations.css",
                                 "/recommendations.js",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/profile.html",
+                                "/profile.css",
+                                "/profile.js"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

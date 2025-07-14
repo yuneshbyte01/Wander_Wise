@@ -24,16 +24,15 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO dto) {
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody UserRequestDTO dto) {
         try {
-            UserResponseDTO updated = userService.updateUser(id, dto);
+            UserResponseDTO updated = userService.updateUser(userId, dto);
             return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
 
     @GetMapping
     public ResponseEntity<?> getAllUsers() {

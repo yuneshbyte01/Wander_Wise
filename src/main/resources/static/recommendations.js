@@ -10,7 +10,7 @@ window.onload = () => {
         return;
     }
 
-    // Show logout link
+    // Show the logout link
     const logoutBtn = document.getElementById("logoutLink");
     if (logoutBtn) {
         logoutBtn.style.display = "inline";
