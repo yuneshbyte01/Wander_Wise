@@ -31,30 +31,18 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",
-                                "/",
-                                "/app.js",
-                                "/style.css",
-                                "/destinations",
-                                "/favicon.ico",
-                                "/login.html",
-                                "/login.js",
-                                "/register.html",
-                                "/register.js",
-                                "/destinations.html",
-                                "/destinations.css",
-                                "/index.html",
-                                "/home.css",
-                                "/home.js",
-                                "/recommendations.html",
-                                "/recommendations.css",
-                                "/recommendations.js",
-                                "/favicon.ico",
-                                "/profile.html",
-                                "/profile.css",
-                                "/profile.js"
+                                "/api/auth/**",
+                                "/api/ping"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(
+                                "/*.html",
+                                "/*.js",
+                                "/*.css",
+                                "/",
+                                "/favicon.ico"
+                        ).permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
