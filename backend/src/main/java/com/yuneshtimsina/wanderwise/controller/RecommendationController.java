@@ -19,7 +19,7 @@ public class RecommendationController {
     @GetMapping("/{userId}")
     public ResponseEntity<?> getRecommendations(@PathVariable Long userId) {
         try {
-            List<RecommendationDTO> recommendations = recommendationService.getRecommendationsForUser(userId);
+            List<RecommendationDTO> recommendations = recommendationService.getRecommendations(userId);
             if (recommendations.isEmpty()) {
                 return new ResponseEntity<>("No matching destinations found.", HttpStatus.NO_CONTENT);
             }

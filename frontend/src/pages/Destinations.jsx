@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { 
   Search, 
   Globe, 
   Mountain, 
   MapPin, 
   Calendar, 
-  Heart, 
   Eye,
   Sparkles
 } from "lucide-react";
+import WishlistButton from '../components/WishlistButton';
 
 export default function Destinations() {
   const [destinations, setDestinations] = useState([]);
@@ -17,60 +17,85 @@ export default function Destinations() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSeason, setSelectedSeason] = useState("");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [selectedTags, setSelectedTags] = useState([]);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
-
-  const seasons = ["Spring", "Summer", "Autumn", "Winter", "Monsoon"];
-  const allTags = ["trekking", "temples", "culture", "adventure", "nature", "food", "photography", "relaxation"];
 
   const fetchDestinations = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/destinations");
-      if (!response.ok) {
-        throw new Error("Failed to fetch destinations");
+      const response = await fetch('http://localhost:8080/api/destinations');
+      if (response.ok) {
+        const data = await response.json();
+        setDestinations(data);
+        setFilteredDestinations(data);
+      } else {
+        setError("Failed to load destinations");
       }
-      const data = await response.json();
-      setDestinations(data);
-      setFilteredDestinations(data);
-    } catch (err) {
-      setError("Failed to load destinations. Please try again later.");
-      console.error("Error fetching destinations:", err);
+    } catch (error) {
+      console.error("Error fetching destinations:", error);
+      setError("Failed to load destinations");
     } finally {
       setLoading(false);
     }
   };
 
-  const filterDestinations = useCallback(() => {
-    let filtered = destinations.filter(destination => {
-      // Search by name or place
-      const matchesSearch = destination.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           destination.place.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           destination.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-      // Filter by season
-      const matchesSeason = !selectedSeason || destination.bestSeason === selectedSeason;
-
-      // Filter by tags
-      const matchesTags = selectedTags.length === 0 || 
-                         selectedTags.some(tag => destination.tags?.toLowerCase().includes(tag.toLowerCase()));
-
-      // Filter by price range
-      const matchesPrice = destination.averageCost >= priceRange.min && 
-                          destination.averageCost <= priceRange.max;
-
-      return matchesSearch && matchesSeason && matchesTags && matchesPrice;
-    });
-
-    setFilteredDestinations(filtered);
-  }, [destinations, searchTerm, selectedSeason, selectedTags, priceRange]);
-
   useEffect(() => {
     fetchDestinations();
   }, []);
 
+  // Filter destinations based on search and filters
   useEffect(() => {
-    filterDestinations();
-  }, [filterDestinations]);
+    let filtered = destinations;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(destination =>
+        destination.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        destination.place.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        destination.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Season filter
+    if (selectedSeason) {
+      filtered = filtered.filter(destination =>
+        destination.bestSeason === selectedSeason
+      );
+    }
+
+    // Price range filter
+    if (priceRange.min !== "" || priceRange.max !== "") {
+      filtered = filtered.filter(destination => {
+        const cost = destination.averageCost || 0;
+        const min = priceRange.min !== "" ? Number(priceRange.min) : 0;
+        const max = priceRange.max !== "" ? Number(priceRange.max) : Infinity;
+        return cost >= min && cost <= max;
+      });
+    }
+
+    // Tags filter
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(destination => {
+        if (!destination.tags) return false;
+        const destinationTags = destination.tags.toLowerCase().split(',').map(tag => tag.trim());
+        return selectedTags.some(tag => destinationTags.includes(tag.toLowerCase()));
+      });
+    }
+
+    setFilteredDestinations(filtered);
+  }, [destinations, searchTerm, selectedSeason, priceRange, selectedTags]);
+
+  // Listen for wishlist changes
+  useEffect(() => {
+    const handleWishlistChange = () => {
+      // Force re-render of destination cards to update wishlist buttons
+      setFilteredDestinations([...filteredDestinations]);
+    };
+
+    window.addEventListener('wishlistChange', handleWishlistChange);
+    return () => {
+      window.removeEventListener('wishlistChange', handleWishlistChange);
+    };
+  }, [filteredDestinations]);
 
   const toggleTag = (tag) => {
     setSelectedTags(prev => 
@@ -84,8 +109,16 @@ export default function Destinations() {
     setSearchTerm("");
     setSelectedSeason("");
     setSelectedTags([]);
-    setPriceRange({ min: 0, max: 100000 });
+    setPriceRange({ min: "", max: "" });
   };
+
+  // Get unique seasons and tags
+  const seasons = [...new Set(destinations.map(d => d.bestSeason).filter(Boolean))];
+  const allTags = [...new Set(
+    destinations
+      .flatMap(d => d.tags ? d.tags.split(',').map(tag => tag.trim()) : [])
+      .filter(Boolean)
+  )];
 
   if (loading) {
     return (
@@ -99,7 +132,7 @@ export default function Destinations() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
@@ -227,7 +260,10 @@ export default function Destinations() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDestinations.map(destination => (
-              <DestinationCard key={destination.id} destination={destination} />
+              <DestinationCard 
+                key={destination.id} 
+                destination={destination}
+              />
             ))}
           </div>
         )}
@@ -240,7 +276,15 @@ const DestinationCard = ({ destination }) => {
   const tags = destination.tags ? destination.tags.split(',').map(tag => tag.trim()) : [];
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:scale-105">
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:scale-105 relative group">
+      {/* Wishlist Button */}
+      <div className="absolute top-4 right-4 z-10">
+        <WishlistButton 
+          destinationId={destination.id}
+          className="bg-white/20 backdrop-blur-sm p-2 rounded-full hover:bg-white/30 transition-colors"
+        />
+      </div>
+
       {/* Image */}
       <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 relative overflow-hidden">
         {destination.imageUrl ? (
@@ -254,11 +298,7 @@ const DestinationCard = ({ destination }) => {
             <Mountain className="w-16 h-16 text-white/80" />
           </div>
         )}
-        <div className="absolute top-4 right-4">
-          <button className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors">
-            <Heart className="w-5 h-5" />
-          </button>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
       </div>
 
       {/* Content */}

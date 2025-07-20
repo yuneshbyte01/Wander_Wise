@@ -11,7 +11,8 @@ import {
   Mountain,
   Sparkles,
   User,
-  ChevronDown
+  ChevronDown,
+  Heart
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -102,6 +103,7 @@ const Navbar = () => {
             {isLoggedIn ? (
               <>
                 <NavLink href="/recommendations" label="Recommendations" icon={<MapPin className="w-4 h-4" />} />
+                <NavLink href="/wishlist" label="Wishlist" icon={<Heart className="w-4 h-4" />} />
                 
                 {/* User Dropdown */}
                 <div className="relative ml-4">
@@ -182,6 +184,7 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <>
                   <MobileNavLink href="/recommendations" label="Recommendations" icon={<MapPin className="w-4 h-4" />} />
+                  <MobileNavLink href="/wishlist" label="Wishlist" icon={<Heart className="w-4 h-4" />} />
                   
                   {/* Mobile User Info */}
                   <div className="px-4 py-3 border-t border-gray-100">

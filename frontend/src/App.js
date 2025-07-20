@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import Recommendations from './pages/Recommendations';
 import Destinations from './pages/Destinations';
 import Profile from './pages/Profile';
+import Wishlist from './pages/Wishlist';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -37,6 +38,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute>
+                  <Wishlist />
                 </ProtectedRoute>
               }
             />

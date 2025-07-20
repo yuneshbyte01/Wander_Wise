@@ -1,110 +1,70 @@
 import { useState, useEffect, useCallback } from "react";
 import { 
   Target, 
-  TrendingUp, 
-  Calendar, 
-  Eye, 
   RefreshCw, 
+  Calendar, 
+  Eye,
   Mountain,
-  Search
+  MapPin
 } from "lucide-react";
+import WishlistButton from '../components/WishlistButton';
 
 export default function Recommendations() {
   const [recommendations, setRecommendations] = useState([]);
   const [filteredRecommendations, setFilteredRecommendations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSeason, setSelectedSeason] = useState("");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
-  const [sortBy, setSortBy] = useState("matchScore"); // matchScore, price, name
-  const [userInfo, setUserInfo] = useState(null);
+  const [sortBy, setSortBy] = useState("matchScore");
+  const [toast, setToast] = useState(null);
 
   const seasons = ["Spring", "Summer", "Autumn", "Winter", "Monsoon"];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-    const userName = localStorage.getItem("userName");
 
     if (!token || !userId) {
-      setError("Please login to view personalized recommendations");
-      setLoading(false);
+      setError("Please log in to view recommendations");
+      setIsLoading(false);
       return;
     }
 
-    setUserInfo({ userId, userName });
     fetchRecommendations(userId, token);
   }, []);
 
   const fetchRecommendations = async (userId, token) => {
     try {
-      setLoading(true);
       const response = await fetch(`http://localhost:8080/api/recommendations/${userId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
         }
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Please login again to view recommendations");
-        }
         throw new Error("Failed to fetch recommendations");
       }
 
       const data = await response.json();
+      console.log("Recommendations data:", data); // Debug log
       setRecommendations(data);
       setFilteredRecommendations(data);
     } catch (err) {
-      setError(err.message);
+      setError("Failed to load recommendations. Please try again later.");
       console.error("Error fetching recommendations:", err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const filterAndSortRecommendations = useCallback(() => {
-    let filtered = recommendations.filter(recommendation => {
-      // Search by name
-      const matchesSearch = recommendation.name.toLowerCase().includes(searchTerm.toLowerCase());
-
-      // Filter by season
-      const matchesSeason = !selectedSeason || recommendation.bestSeason === selectedSeason;
-
-      // Filter by price range
-      const matchesPrice = recommendation.averageCost >= priceRange.min && 
-                          recommendation.averageCost <= priceRange.max;
-
-      return matchesSearch && matchesSeason && matchesPrice;
-    });
-
-    // Sort recommendations
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "matchScore":
-          return b.matchScore - a.matchScore; // Highest score first
-        case "price":
-          return a.averageCost - b.averageCost; // Lowest price first
-        case "name":
-          return a.name.localeCompare(b.name); // Alphabetical
-        default:
-          return b.matchScore - a.matchScore;
-      }
-    });
-
-    setFilteredRecommendations(filtered);
-  }, [recommendations, searchTerm, selectedSeason, priceRange, sortBy]);
-
-  useEffect(() => {
-    filterAndSortRecommendations();
-  }, [filterAndSortRecommendations]);
-
   const handleRefresh = () => {
-    if (userInfo) {
-      const token = localStorage.getItem("token");
-      fetchRecommendations(userInfo.userId, token);
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+    if (token && userId) {
+      fetchRecommendations(userId, token);
     }
   };
 
@@ -116,87 +76,95 @@ export default function Recommendations() {
   };
 
   const getMatchScoreColor = (score) => {
-    if (score >= 90) return "text-green-600 bg-green-100";
-    if (score >= 80) return "text-blue-600 bg-blue-100";
-    if (score >= 70) return "text-yellow-600 bg-yellow-100";
-    return "text-gray-600 bg-gray-100";
+    if (score >= 3) return "bg-green-100 text-green-800";
+    if (score >= 2) return "bg-yellow-100 text-yellow-800";
+    return "bg-red-100 text-red-800";
   };
 
   const getMatchScoreIcon = (score) => {
-    if (score >= 90) return "⭐";
-    if (score >= 80) return "✨";
-    if (score >= 70) return "🌟";
-    return "💫";
+    if (score >= 3) return "💡";
+    if (score >= 2) return "⭐";
+    return "💡";
   };
+
+  useEffect(() => {
+    let filtered = recommendations.filter(recommendation => {
+      const matchesSearch = recommendation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           recommendation.tags?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesSeason = !selectedSeason || recommendation.bestSeason === selectedSeason;
+
+      const matchesPrice = recommendation.averageCost >= priceRange.min && 
+                          recommendation.averageCost <= priceRange.max;
+
+      return matchesSearch && matchesSeason && matchesPrice;
+    });
+
+    // Sort
+    switch (sortBy) {
+      case "price":
+        filtered.sort((a, b) => a.averageCost - b.averageCost);
+        break;
+      case "name":
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default: // matchScore
+        filtered.sort((a, b) => b.matchScore - a.matchScore);
+    }
+
+    setFilteredRecommendations(filtered);
+  }, [recommendations, searchTerm, selectedSeason, priceRange, sortBy]);
+
+  // Listen for wishlist changes
+  useEffect(() => {
+    const handleWishlistChange = () => {
+      // Force re-render of recommendation cards to update wishlist buttons
+      setFilteredRecommendations([...filteredRecommendations]);
+    };
+
+    window.addEventListener('wishlistChange', handleWishlistChange);
+    return () => {
+      window.removeEventListener('wishlistChange', handleWishlistChange);
+    };
+  }, [filteredRecommendations]);
+
+  const handleWishlistChange = useCallback(({ action, destinationId, undo }) => {
+    const recommendation = recommendations.find(r => r.id === destinationId);
+    if (!recommendation) return;
+
+    const message = action === 'add' 
+      ? `${recommendation.name} added to wishlist`
+      : `${recommendation.name} removed from wishlist`;
+    
+    setToast({
+      message,
+      onUndo: undo,
+      onClose: () => setToast(null)
+    });
+  }, [recommendations]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading your personalized recommendations...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error && !userInfo) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Login Required</h3>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <a 
-            href="/login" 
-            className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-          >
-            Go to Login
-          </a>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading recommendations...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pt-16">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
         <div className="text-center mb-12">
-          <div className="mb-4">
-            <span className="inline-flex items-center bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold">
-              <Target className="w-4 h-4 mr-2" />
-              Personalized for You
-            </span>
-          </div>
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
-            Your <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent">Perfect Matches</span>
+            Your <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent">Personalized</span> Recommendations
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto font-medium">
-            Discover destinations tailored to your preferences, {userInfo?.userName}
+            Discover destinations perfectly matched to your interests and preferences
           </p>
-        </div>
-
-        {/* Stats Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-black text-purple-600 mb-2">{recommendations.length}</div>
-              <div className="text-gray-600 font-medium">Total Recommendations</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-black text-blue-600 mb-2">
-                {recommendations.length > 0 ? Math.max(...recommendations.map(r => r.matchScore)) : 0}%
-              </div>
-              <div className="text-gray-600 font-medium">Best Match Score</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-black text-green-600 mb-2">
-                {recommendations.length > 0 ? Math.round(recommendations.reduce((sum, r) => sum + r.averageCost, 0) / recommendations.length).toLocaleString() : 0} NPR
-              </div>
-              <div className="text-gray-600 font-medium">Average Cost</div>
-            </div>
-          </div>
         </div>
 
         {/* Search and Filters */}
@@ -320,6 +288,8 @@ export default function Recommendations() {
           </div>
         )}
       </div>
+      {/* Toast Notification */}
+      {toast && <Toast {...toast} />}
     </div>
   );
 }
@@ -336,8 +306,16 @@ const RecommendationCard = ({ recommendation, rank, getMatchScoreColor, getMatch
         </div>
       </div>
 
-      {/* Match Score Badge */}
+      {/* Wishlist Button */}
       <div className="absolute top-4 right-4 z-10">
+        <WishlistButton 
+          destinationId={recommendation.id}
+          className="bg-white/20 backdrop-blur-sm p-2 rounded-full hover:bg-white/30 transition-colors"
+        />
+      </div>
+
+      {/* Match Score Badge */}
+      <div className="absolute top-12 right-4 z-10">
         <div className={`px-3 py-1 rounded-full text-sm font-semibold ${getMatchScoreColor(recommendation.matchScore)}`}>
           <span className="mr-1">{getMatchScoreIcon(recommendation.matchScore)}</span>
           {recommendation.matchScore}%
@@ -346,29 +324,44 @@ const RecommendationCard = ({ recommendation, rank, getMatchScoreColor, getMatch
 
       {/* Image */}
       <div className="h-48 bg-gradient-to-br from-purple-400 to-pink-500 relative overflow-hidden">
-        <div className="w-full h-full flex items-center justify-center">
-          <Mountain className="w-16 h-16 text-white/80" />
-        </div>
+        {recommendation.imageUrl ? (
+          <img 
+            src={recommendation.imageUrl} 
+            alt={recommendation.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Mountain className="w-16 h-16 text-white/80" />
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
       </div>
 
       {/* Content */}
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
+          <div>
             <h3 className="text-xl font-bold text-gray-900 mb-1">{recommendation.name}</h3>
             <div className="flex items-center text-gray-600">
-              <TrendingUp className="w-4 h-4 mr-1" />
-              <span className="text-sm">Perfect Match</span>
+              <MapPin className="w-4 h-4 mr-1" />
+              <span className="text-sm">{recommendation.place || "Perfect Match"}</span>
             </div>
           </div>
-          <div className="text-right ml-4">
+          <div className="text-right">
             <div className="flex items-center text-green-600 font-semibold">
               <span className="mr-1 font-bold">₹</span>
               <span>{recommendation.averageCost?.toLocaleString()} NPR</span>
             </div>
           </div>
         </div>
+
+        {/* Description */}
+        {recommendation.description && (
+          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+            {recommendation.description}
+          </p>
+        )}
 
         {/* Season */}
         {recommendation.bestSeason && (

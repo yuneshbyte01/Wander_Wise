@@ -8,75 +8,109 @@ import com.yuneshtimsina.wanderwise.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class RecommendationService {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private DestinationRepository destinationRepository;
 
-    public List<RecommendationDTO> getRecommendationsForUser(Long userId) {
+    @Autowired
+    private UserRepository userRepository;
+
+    public List<RecommendationDTO> getRecommendations(Long userId) {
+        // Get user preferences
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Destination> destinations = destinationRepository.findAll();
+        // Get all destinations
+        List<Destination> allDestinations = destinationRepository.findAll();
 
-        String[] userInterests = Optional.ofNullable(user.getInterests())
-                .map(s -> s.toLowerCase().split(","))
-                .orElse(new String[0]);
-        Set<String> userInterestSet = Arrays.stream(userInterests)
-                .map(String::trim)
-                .collect(Collectors.toSet());
+        // Calculate match scores and create recommendations
+        return allDestinations.stream()
+                .map(destination -> {
+                    int matchScore = calculateMatchScore(user, destination);
+                    return RecommendationDTO.builder()
+                            .id(destination.getId())
+                            .name(destination.getName())
+                            .matchScore(matchScore)
+                            .tags(destination.getTags())
+                            .averageCost(destination.getAverageCost())
+                            .bestSeason(destination.getBestSeason())
+                            .imageUrl(destination.getImageUrl()) // Add this
+                            .place(destination.getPlace()) // Add this
+                            .description(destination.getDescription()) // Add this
+                            .build();
+                })
+                .filter(recommendation -> recommendation.getMatchScore() > 30) // Only show recommendations with >30% match
+                .sorted((r1, r2) -> Integer.compare(r2.getMatchScore(), r1.getMatchScore())) // Sort by match score
+                .collect(Collectors.toList());
+    }
 
-        List<RecommendationDTO> recommendations = new ArrayList<>();
+    private int calculateMatchScore(User user, Destination destination) {
+        int score = 0;
+        
+        // Budget match (40% weight)
+        if (user.getBudget() != null && destination.getAverageCost() != null) {
+            double budgetRatio = user.getBudget() / destination.getAverageCost();
+            if (budgetRatio >= 1.5) score += 40; // Well within budget
+            else if (budgetRatio >= 1.0) score += 30; // Within budget
+            else if (budgetRatio >= 0.7) score += 20; // Slightly over budget
+            else if (budgetRatio >= 0.5) score += 10; // Over budget but manageable
+        }
 
-        for (Destination dest : destinations) {
-            int score = 0;
-
-            // Budget check
-            if (dest.getAverageCost() != null && user.getBudget() != null && dest.getAverageCost() <= user.getBudget()) {
-                score += 1;
-            }
-
-            // Season check (a case-insensitive)
-            if (dest.getBestSeason() != null && user.getPreferredSeason() != null
-                    && dest.getBestSeason().equalsIgnoreCase(user.getPreferredSeason())) {
-                score += 1;
-            }
-
-            // Interests overlap
-            int interestMatches = 0;
-            if (dest.getTags() != null && !dest.getTags().isBlank()) {
-                String[] destTags = dest.getTags().toLowerCase().split(",");
-                Set<String> destTagSet = Arrays.stream(destTags).map(String::trim).collect(Collectors.toSet());
-
-                for (String interest : userInterestSet) {
-                    if (destTagSet.contains(interest)) {
-                        interestMatches++;
-                    }
-                }
-            }
-            score += interestMatches;
-
-            if (score > 0) { // Only include destinations with some score
-                recommendations.add(RecommendationDTO.builder()
-                        .name(dest.getName())
-                        .matchScore(score)
-                        .tags(dest.getTags())
-                        .averageCost(dest.getAverageCost())
-                        .bestSeason(dest.getBestSeason())
-                        .build());
+        // Season match (30% weight)
+        if (user.getPreferredSeason() != null && destination.getBestSeason() != null) {
+            if (user.getPreferredSeason().equalsIgnoreCase(destination.getBestSeason())) {
+                score += 30;
+            } else if (isSeasonCompatible(user.getPreferredSeason(), destination.getBestSeason())) {
+                score += 15;
             }
         }
 
-        // Sort descending by score
-        recommendations.sort(Comparator.comparingInt(RecommendationDTO::getMatchScore).reversed());
+        // Interests match (30% weight)
+        if (user.getInterests() != null && destination.getTags() != null) {
+            String[] userInterests = user.getInterests().toLowerCase().split(",");
+            String[] destinationTags = destination.getTags().toLowerCase().split(",");
+            
+            int matchingTags = 0;
+            for (String interest : userInterests) {
+                for (String tag : destinationTags) {
+                    if (interest.trim().equals(tag.trim())) {
+                        matchingTags++;
+                        break;
+                    }
+                }
+            }
+            
+            if (matchingTags > 0) {
+                score += Math.min(30, matchingTags * 10);
+            }
+        }
 
-        return recommendations;
+        return Math.min(100, score);
+    }
+
+    private boolean isSeasonCompatible(String userSeason, String destinationSeason) {
+        // Define season compatibility
+        if (userSeason.equalsIgnoreCase("spring") && 
+            (destinationSeason.equalsIgnoreCase("spring") || destinationSeason.equalsIgnoreCase("summer"))) {
+            return true;
+        }
+        if (userSeason.equalsIgnoreCase("summer") && 
+            (destinationSeason.equalsIgnoreCase("summer") || destinationSeason.equalsIgnoreCase("autumn"))) {
+            return true;
+        }
+        if (userSeason.equalsIgnoreCase("autumn") && 
+            (destinationSeason.equalsIgnoreCase("autumn") || destinationSeason.equalsIgnoreCase("winter"))) {
+            return true;
+        }
+        if (userSeason.equalsIgnoreCase("winter") && 
+            (destinationSeason.equalsIgnoreCase("winter") || destinationSeason.equalsIgnoreCase("spring"))) {
+            return true;
+        }
+        return false;
     }
 }
