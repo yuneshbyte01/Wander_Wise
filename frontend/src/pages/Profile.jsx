@@ -4,7 +4,6 @@ import {
   User, 
   Mail, 
   Heart, 
-  DollarSign, 
   Calendar, 
   Lock, 
   Save, 
@@ -412,18 +411,18 @@ export default function Profile() {
 
           <div>
             <label className="text-sm font-semibold text-gray-700 flex items-center mb-2">
-              <DollarSign className="w-4 h-4 mr-2 text-blue-600" />
-              Budget Range (USD)
+              <span className="w-4 h-4 mr-2 text-blue-600 font-bold">₹</span>
+              Budget Range (NPR)
             </label>
             <input
               type="number"
               name="budget"
               value={preferencesData.budget}
               onChange={handleInputChange}
-              placeholder="e.g., 5000"
+              placeholder="e.g., 50000"
               className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
               min="0"
-              step="100"
+              step="1000"
             />
           </div>
 

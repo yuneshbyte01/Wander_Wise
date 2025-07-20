@@ -9,7 +9,6 @@ import {
   Sparkles, 
   ArrowRight,
   Heart,
-  DollarSign,
   Calendar,
   Globe
 } from "lucide-react";
@@ -177,7 +176,7 @@ export default function Register() {
             {/* Budget Field */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700 flex items-center">
-                <DollarSign className="w-4 h-4 mr-2 text-blue-600" />
+                <span className="w-4 h-4 mr-2 text-blue-600 font-bold">₹</span>
                 Budget Range (NPR)
               </label>
               <div className="relative">
@@ -189,7 +188,7 @@ export default function Register() {
                   onChange={handleChange}
                   className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white/50 backdrop-blur-sm"
                 />
-                <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 font-bold">₹</span>
               </div>
             </div>
 

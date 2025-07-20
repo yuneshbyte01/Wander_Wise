@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { 
-  DollarSign, 
-  Calendar,
+  Target, 
+  TrendingUp, 
+  Calendar, 
+  Eye, 
+  RefreshCw, 
   Mountain,
-  Globe,
-  Eye,
-  Target,
-  TrendingUp,
-  RefreshCw
+  Search
 } from "lucide-react";
 
 export default function Recommendations() {
@@ -145,7 +144,7 @@ export default function Recommendations() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <Globe className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Login Required</h3>
           <p className="text-gray-600 mb-6">{error}</p>
           <a 
@@ -365,7 +364,7 @@ const RecommendationCard = ({ recommendation, rank, getMatchScoreColor, getMatch
           </div>
           <div className="text-right ml-4">
             <div className="flex items-center text-green-600 font-semibold">
-              <DollarSign className="w-4 h-4 mr-1" />
+              <span className="mr-1 font-bold">₹</span>
               <span>{recommendation.averageCost?.toLocaleString()} NPR</span>
             </div>
           </div>

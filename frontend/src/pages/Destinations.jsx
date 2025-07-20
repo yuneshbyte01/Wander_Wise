@@ -1,14 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { 
-  MapPin, 
   Search, 
-  DollarSign, 
-  Calendar,
-  Mountain,
-  Sparkles,
-  Globe,
-  Heart,
-  Eye
+  Globe, 
+  Mountain, 
+  MapPin, 
+  Calendar, 
+  Heart, 
+  Eye,
+  Sparkles
 } from "lucide-react";
 
 export default function Destinations() {
@@ -274,7 +273,7 @@ const DestinationCard = ({ destination }) => {
           </div>
           <div className="text-right">
             <div className="flex items-center text-green-600 font-semibold">
-              <DollarSign className="w-4 h-4 mr-1" />
+              <span className="mr-1 font-bold">₹</span>
               <span>{destination.averageCost?.toLocaleString()} NPR</span>
             </div>
           </div>
