@@ -1,31 +1,43 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Home, AlertCircle } from 'lucide-react';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🌄 WanderWise
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Your Personal Travel Companion for Nepal
-          </p>
-          <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-            <h2 className="text-2xl font-semibold text-primary-600 mb-4">
-              Welcome!
-            </h2>
-            <p className="text-gray-700 mb-4">
-              React + Tailwind CSS is working perfectly! 🎉
-            </p>
-            <button className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
-              Get Started
-            </button>
-          </div>
-        </div>
+    <Router>
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+        <Navbar />
+        <main className="flex-grow pt-16">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            {/* Add more routes here, e.g. Login, Register, Recommendations */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </main>
+        <Footer />
       </div>
-    </div>
+    </Router>
   );
 }
+
+const NotFoundPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <AlertCircle className="w-24 h-24 text-gray-400 mx-auto mb-6" />
+      <h1 className="text-6xl font-black text-gray-900 mb-4">404</h1>
+      <p className="text-xl text-gray-600 mb-8 font-medium">Page not found</p>
+      <a 
+        href="/" 
+        className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+      >
+        <Home className="w-4 h-4 mr-2" />
+        Go Home
+      </a>
+    </div>
+  </div>
+);
 
 export default App;
