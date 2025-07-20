@@ -1,70 +1,276 @@
-# Getting Started with Create React App
+## 📁 **Frontend README.md**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```markdown:frontend/README.md
+# 🏔️ Wander Wise - Frontend Application
 
-## Available Scripts
+React.js frontend application for the Wander Wise travel recommendation platform.
 
-In the project directory, you can run:
+## 🚀 Quick Start
 
-### `npm start`
+### Prerequisites
+- Node.js 16 or higher
+- npm or yarn
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 1. Install Dependencies
+```bash
+npm install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 2. Environment Configuration
+Create `.env` file in the root directory:
+```env
+REACT_APP_API_URL=http://localhost:8080/api
+```
 
-### `npm test`
+### 3. Start Development Server
+```bash
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The application will open at: http://localhost:3001
 
-### `npm run build`
+## 📁 Project Structure
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+src/
+├── components/          # Reusable Components
+│   ├── Navbar.jsx      # Navigation bar
+│   ├── WishlistButton.jsx  # Wishlist toggle button
+│   └── ProtectedRoute.jsx  # Route protection
+├── pages/              # Page Components
+│   ├── HomePage.jsx    # Landing page
+│   ├── Login.jsx       # Login page
+│   ├── Register.jsx    # Registration page
+│   ├── Destinations.jsx # Destinations listing
+│   ├── Recommendations.jsx # AI recommendations
+│   ├── Wishlist.jsx    # User wishlist
+│   └── Profile.jsx     # User profile
+├── App.js              # Main application component
+├── index.js            # Application entry point
+└── index.css           # Global styles
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+##  UI Components
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Navigation
+- **Navbar**: Responsive navigation with user dropdown
+- **Mobile Menu**: Collapsible mobile navigation
+- **Protected Routes**: Authentication-based route protection
 
-### `npm run eject`
+### Cards
+- **Destination Card**: Display destination information with wishlist button
+- **Recommendation Card**: Show recommendations with match scores
+- **Wishlist Card**: Display saved destinations with remove option
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Forms
+- **Login Form**: User authentication
+- **Register Form**: User registration
+- **Profile Form**: User profile management
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔐 Authentication
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Login Flow
+1. User enters email and password
+2. API call to `/api/auth/login`
+3. JWT token stored in localStorage
+4. User redirected to home page
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Protected Routes
+- `/profile` - User profile management
+- `/recommendations` - AI recommendations
+- `/wishlist` - Personal wishlist
 
-## Learn More
+### Logout
+- Clears localStorage
+- Redirects to home page
+- Updates navigation state
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📱 Pages
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Home Page (`/`)
+- Hero section with call-to-action
+- Featured destinations
+- User testimonials
 
-### Code Splitting
+### Destinations (`/destinations`)
+- Grid layout of all destinations
+- Advanced search and filtering
+- Wishlist integration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Recommendations (`/recommendations`)
+- AI-powered destination suggestions
+- Match score indicators
+- Filter and sort options
 
-### Analyzing the Bundle Size
+### Wishlist (`/wishlist`)
+- Personal saved destinations
+- Remove and clear functionality
+- Date tracking for added items
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Profile (`/profile`)
+- User information management
+- Preference settings
+- Password change
 
-### Making a Progressive Web App
+## 🎯 Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Search & Filtering
+- **Text Search**: Search by name, place, or description
+- **Season Filter**: Filter by best season
+- **Price Range**: Filter by budget
+- **Activity Tags**: Filter by interests
 
-### Advanced Configuration
+### Wishlist Management
+- **Add/Remove**: Toggle destinations in wishlist
+- **Real-time Updates**: Status updates across pages
+- **Date Tracking**: Show when items were added
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Responsive Design
+- **Mobile First**: Optimized for mobile devices
+- **Tablet Support**: Responsive grid layouts
+- **Desktop Experience**: Enhanced desktop features
 
-### Deployment
+## ️ Available Scripts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Development
+```bash
+npm start          # Start development server
+npm test           # Run tests
+npm run build      # Build for production
+npm run eject      # Eject from Create React App
+```
 
-### `npm run build` fails to minify
+### Production
+```bash
+npm run build      # Create optimized build
+npm run serve      # Serve production build locally
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 📦 Dependencies
+
+### Core Dependencies
+```json
+{
+  "react": "^18.2.0",
+  "react-dom": "^18.2.0",
+  "react-router-dom": "^6.8.0",
+  "lucide-react": "^0.263.1"
+}
+```
+
+### Development Dependencies
+```json
+{
+  "tailwindcss": "^3.2.7",
+  "autoprefixer": "^10.4.14",
+  "postcss": "^8.4.21"
+}
+```
+
+## 🎨 Styling
+
+### Tailwind CSS
+- Utility-first CSS framework
+- Custom color palette
+- Responsive design utilities
+- Custom animations
+
+### Custom Styles
+- Gradient backgrounds
+- Card hover effects
+- Loading animations
+- Form styling
+
+##  Configuration
+
+### Environment Variables
+```env
+REACT_APP_API_URL=http://localhost:8080/api
+REACT_APP_ENV=development
+```
+
+### Tailwind Configuration
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#eff6ff',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+        }
+      }
+    }
+  },
+  plugins: []
+}
+```
+
+## 🧪 Testing
+
+### Run Tests
+```bash
+npm test
+```
+
+### Test Coverage
+```bash
+npm test -- --coverage
+```
+
+## 🚀 Deployment
+
+### Build for Production
+```bash
+npm run build
+```
+
+### Deploy to Netlify
+1. Connect repository to Netlify
+2. Set build command: `npm run build`
+3. Set publish directory: `build`
+
+### Deploy to Vercel
+1. Install Vercel CLI
+2. Run `vercel` in project directory
+3. Follow deployment prompts
+
+## 🔍 Performance
+
+### Optimization Techniques
+- **Code Splitting**: Lazy loading of components
+- **Image Optimization**: Responsive images with fallbacks
+- **Bundle Optimization**: Tree shaking and minification
+- **Caching**: Browser caching strategies
+
+### Performance Monitoring
+- Lighthouse audits
+- Bundle analyzer
+- Performance metrics
+
+## 🛠️ Development Guidelines
+
+### Code Style
+- Use functional components with hooks
+- Follow React naming conventions
+- Use meaningful component names
+- Add proper PropTypes or TypeScript
+
+### Best Practices
+- Keep components small and focused
+- Use proper state management
+- Handle loading and error states
+- Implement proper form validation
+- Use semantic HTML
+
+##  Support
+
+For frontend-specific issues, create an issue in the repository or contact the frontend team.
+
+---
+
+Built with React ❤️

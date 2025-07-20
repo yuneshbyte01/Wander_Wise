@@ -1,196 +1,149 @@
-# 🌄 WanderWise – Travel Recommendation App (Nepal Edition)
+# 🏔️ Wander Wise - Nepal Travel Recommendation App
 
-**WanderWise** is a personalized travel recommendation system focused on destinations across Nepal. Built with a modern Spring Boot backend and RESTful APIs, the application allows users to register, log in, and get destination suggestions based on their interests, budget, and travel season preferences.
+A modern, AI-powered travel recommendation platform that helps users discover amazing destinations in Nepal based on their preferences, budget, and interests.
 
----
+## 🌟 Features
 
-## 🚀 Features
+- **Smart Recommendations**: AI-powered destination suggestions based on user preferences
+- **Personal Wishlist**: Save and manage favorite destinations
+- **Advanced Search**: Filter destinations by season, price, and activities
+- **User Profiles**: Manage preferences and travel history
+- **Responsive Design**: Beautiful UI that works on all devices
+- **Secure Authentication**: JWT-based user authentication
 
-### ✅ Backend Features
-- 🌍 RESTful API for travel destinations in Nepal
-- 🔍 Personalized recommendations based on user preferences
-- 🔐 JWT token-based authentication
-- 👤 User registration & profile management
-- 🗄️ MySQL database with JPA/Hibernate
-- 🛡️ Spring Security integration
+## 📁 **Main README.md**
 
-### ✅ API Endpoints
-- `GET /api/destinations` - Get all destinations
-- `GET /api/recommendations/{userId}` - Get personalized recommendations
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-- `PUT /api/users/{userId}` - Update user preferences
-- `GET /api/health` - Health check
-
----
-
-## 🛠️ Tech Stack
-
-| Layer       | Tech                        |
-|-------------|-----------------------------|
-| Backend     | Spring Boot 3.5.3 (Java 17) |
-| Database    | MySQL 8.0                   |
-| Security    | Spring Security + JWT       |
-| ORM         | JPA/Hibernate               |
-| Build Tool  | Maven                       |
-| API Format  | RESTful JSON APIs           |
-
----
-
-## 📂 Project Structure
-
+```markdown:README.md```
 ```
-wanderwise/
-├── backend/              ← Spring Boot backend
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/yuneshtimsina/wanderwise/
-│   │   │   │   ├── controller/         # REST endpoints
-│   │   │   │   ├── service/            # Business logic
-│   │   │   │   ├── repository/         # JPA interfaces
-│   │   │   │   ├── model/              # Entities
-│   │   │   │   ├── dto/                # Data Transfer Objects
-│   │   │   │   └── security/           # JWT, config, auth
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   └── test/
-│   ├── pom.xml
-│   └── mvnw
-├── frontend/             ← Frontend (to be developed)
-├── README.md
-└── .gitignore
+Wander_Wise/
+├── backend/ # Spring Boot API
+├── frontend/ # React.js Application
+└── README.md # This file
 ```
 
----
-
-## ⚙️ Setup & Run (Backend)
+## 🚀 Quick Start
 
 ### Prerequisites
 - Java 17 or higher
-- MySQL 8.0
-- Maven (optional, wrapper included)
+- Node.js 16 or higher
+- MySQL 8.0 or higher
+- Maven 3.6+
 
-### 1. Clone Repository
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/yuneshbyte01/Wander_Wise.git
-cd Wander_Wise
+git clone https://github.com/yourusername/wander-wise.git
+cd wander-wise
 ```
 
-### 2. Database Setup
-Create a MySQL database:
-```sql
-CREATE DATABASE wanderwise;
-```
-
-### 3. Configure Database
-Update `backend/src/main/resources/application.properties`:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/wanderwise
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-```
-
-### 4. Run Backend
+### 2. Set Up Backend
 ```bash
 cd backend
+# Configure database in application.properties
 mvn spring-boot:run
 ```
+Backend will run on: http://localhost:8080
 
-The backend will start on `http://localhost:8080`
-
-### 5. Test API
+### 3. Set Up Frontend
 ```bash
-# Health check
-curl http://localhost:8080/api/health
-
-# Get destinations
-curl http://localhost:8080/api/destinations
+cd frontend
+npm install
+npm start
 ```
+Frontend will run on: http://localhost:3000
 
----
+## 🛠️ Tech Stack
 
-## 🔮 Future Enhancements
+### Backend
+- **Spring Boot 3.x** - Main framework
+- **Spring Security** - Authentication & authorization
+- **Spring Data JPA** - Database operations
+- **MySQL** - Database
+- **JWT** - Token-based authentication
+- **Maven** - Dependency management
 
-- ❤️ **Wishlist/Favorites**: Save favorite destinations
-- 🧭 **Advanced Search & Filter**: Filter by region, tags, season
-- 🧍‍♂️ **Admin Panel**: Manage destinations and users
-- 📱 **Mobile App**: React Native or Flutter
-- ☁️ **Cloud Deployment**: Deploy to AWS/Azure/GCP
-- 🔍 **Elasticsearch**: Advanced search capabilities
-- 📊 **Analytics**: User behavior and destination popularity
+### Frontend
+- **React 18** - UI framework
+- **React Router** - Client-side routing
+- **Tailwind CSS** - Styling
+- **Lucide React** - Icons
+- **Fetch API** - HTTP requests
 
----
-
-## 🧪 API Testing
+## API Endpoints
 
 ### Authentication
-```bash
-# Register a new user
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Test User",
-    "email": "test@example.com",
-    "password": "password123",
-    "interests": "trekking,culture",
-    "budget": 50000,
-    "preferredSeason": "Spring"
-  }'
-
-# Login
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "test@example.com",
-    "password": "password123"
-  }'
-```
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
 
 ### Destinations
-```bash
-# Get all destinations
-curl http://localhost:8080/api/destinations
+- `GET /api/destinations` - Get all destinations
+- `GET /api/destinations/{id}` - Get specific destination
 
-# Get recommendations (requires auth token)
-curl -H "Authorization: Bearer YOUR_TOKEN" \
-  http://localhost:8080/api/recommendations/1
+### Recommendations
+- `GET /api/recommendations/{userId}` - Get personalized recommendations
+
+### Wishlist
+- `GET /api/wishlist/{userId}` - Get user's wishlist
+- `POST /api/wishlist/{userId}/{destinationId}` - Add to wishlist
+- `DELETE /api/wishlist/{userId}/{destinationId}` - Remove from wishlist
+
+### User Profile
+- `GET /api/users/{id}` - Get user profile
+- `PUT /api/users/{id}` - Update user profile
+
+## 🔐 Environment Variables
+
+### Backend (.env)
+```env
+DB_URL=jdbc:mysql://localhost:3306/wanderwise
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+JWT_SECRET=your_jwt_secret
 ```
 
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-1. **Port 8080 already in use**: Change port in `application.properties`
-2. **Database connection failed**: Check MySQL service and credentials
-3. **JWT token expired**: Re-login to get new token
-
-### Logs
-Check application logs for detailed error messages:
-```bash
-tail -f backend/logs/application.log
+### Frontend (.env)
+```env
+REACT_APP_API_URL=http://localhost:8080/api
 ```
 
----
+## 🚀 Deployment
 
-## 🙋 About Me
-- 👤 **Yunesh Timsina**
-- 🎓 Backend Developer • Spring Boot Enthusiast
-- 🌐 [LinkedIn](https://www.linkedin.com/in/yuneshtimsina/)
-- 📧 [GitHub](https://github.com/yuneshbyte01)
+### Backend Deployment
+```bash
+cd backend
+mvn clean package
+java -jar target/wanderwise-0.0.1-SNAPSHOT.jar
+```
 
----
-
-## 📄 License
-This project is for educational & portfolio purposes.
-
----
+### Frontend Deployment
+```bash
+cd frontend
+npm run build
+# Deploy the build folder to your hosting service
+```
 
 ## 🤝 Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
 
-**Happy Coding! 🚀**
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Team
+
+- **Backend Developer**: [Your Name]
+- **Frontend Developer**: [Your Name]
+- **UI/UX Designer**: [Your Name]
+
+## 📞 Support
+
+For support, email yuneshtimsina@gmail.com this repository.
+
+---
+
+Made with ❤️ for travelers exploring Nepal
 
