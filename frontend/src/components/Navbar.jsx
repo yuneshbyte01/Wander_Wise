@@ -9,18 +9,25 @@ import {
   X,
   Compass,
   Mountain,
-  Sparkles
+  Sparkles,
+  User,
+  ChevronDown
 } from 'lucide-react';
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkLoginStatus = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
+      const token = localStorage.getItem("token");
+      const name = localStorage.getItem("userName");
+      setIsLoggedIn(!!token);
+      setUserName(name || "");
     };
     
     const handleScroll = () => {
@@ -34,7 +41,6 @@ const Navbar = () => {
     checkLoginStatus();
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('storage', checkLoginStatus);
-    // Add custom event listener for auth changes
     window.addEventListener('authChange', handleAuthChange);
 
     return () => {
@@ -50,10 +56,19 @@ const Navbar = () => {
     localStorage.removeItem("userName");
     localStorage.removeItem("role");
     setIsLoggedIn(false);
-    // Dispatch custom event to notify other components
+    setUserName("");
+    setIsUserDropdownOpen(false);
     window.dispatchEvent(new Event('authChange'));
-    // Navigate to home page instead of reloading
     navigate("/");
+  };
+
+  const handleUserMenuClick = () => {
+    setIsUserDropdownOpen(!isUserDropdownOpen);
+  };
+
+  const handleProfileClick = () => {
+    setIsUserDropdownOpen(false);
+    navigate("/profile");
   };
 
   return (
@@ -87,13 +102,46 @@ const Navbar = () => {
             {isLoggedIn ? (
               <>
                 <NavLink href="/recommendations" label="Recommendations" icon={<MapPin className="w-4 h-4" />} />
-                <button 
-                  onClick={handleLogout}
-                  className="ml-4 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center space-x-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </button>
+                
+                {/* User Dropdown */}
+                <div className="relative ml-4">
+                  <button
+                    onClick={handleUserMenuClick}
+                    className="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 px-4 py-2 rounded-lg text-sm font-semibold text-blue-700 transition-all duration-300 border border-blue-200 hover:border-blue-300"
+                  >
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      {userName ? userName.charAt(0).toUpperCase() : "U"}
+                    </div>
+                    <span className="hidden sm:block">{userName || "User"}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isUserDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="text-sm font-semibold text-gray-900">{userName}</p>
+                        <p className="text-xs text-gray-500">{localStorage.getItem("email") || "user@example.com"}</p>
+                      </div>
+                      
+                      <button
+                        onClick={handleProfileClick}
+                        className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 flex items-center space-x-2 transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                        <span>My Profile</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>
@@ -134,13 +182,28 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <>
                   <MobileNavLink href="/recommendations" label="Recommendations" icon={<MapPin className="w-4 h-4" />} />
-                  <button 
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-md flex items-center space-x-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
+                  
+                  {/* Mobile User Info */}
+                  <div className="px-4 py-3 border-t border-gray-100">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {userName ? userName.charAt(0).toUpperCase() : "U"}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">{userName}</p>
+                        <p className="text-xs text-gray-500">{localStorage.getItem("email") || "user@example.com"}</p>
+                      </div>
+                    </div>
+                    
+                    <MobileNavLink href="/profile" label="My Profile" icon={<User className="w-4 h-4" />} />
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-md flex items-center space-x-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
                 </>
               ) : (
                 <>

@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Recommendations from './pages/Recommendations';
 import Destinations from './pages/Destinations';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/destinations" element={<Destinations />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
