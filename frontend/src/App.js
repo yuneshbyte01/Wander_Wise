@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import Recommendations from './pages/Recommendations';
 import Destinations from './pages/Destinations';
 import Profile from './pages/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -20,9 +21,26 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/destinations" element={<Destinations />} />
-            <Route path="/profile" element={<Profile />} />
+            
+            {/* Protected Routes */}
+            <Route
+              path="/recommendations"
+              element={
+                <ProtectedRoute>
+                  <Recommendations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
