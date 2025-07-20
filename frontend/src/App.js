@@ -4,6 +4,10 @@ import { Home, AlertCircle } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Recommendations from './pages/Recommendations';
+import Destinations from './pages/Destinations';
 
 function App() {
   return (
@@ -13,7 +17,10 @@ function App() {
         <main className="flex-grow pt-16">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            {/* Add more routes here, e.g. Login, Register, Recommendations */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/recommendations" element={<Recommendations />} />
+            <Route path="/destinations" element={<Destinations />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   MapPin, 
   LogOut, 
@@ -15,6 +16,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -25,20 +27,33 @@ const Navbar = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
+    const handleAuthChange = () => {
+      checkLoginStatus();
+    };
+
     checkLoginStatus();
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('storage', checkLoginStatus);
+    // Add custom event listener for auth changes
+    window.addEventListener('authChange', handleAuthChange);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('storage', checkLoginStatus);
+      window.removeEventListener('authChange', handleAuthChange);
     };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("role");
     setIsLoggedIn(false);
-    window.location.reload();
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('authChange'));
+    // Navigate to home page instead of reloading
+    navigate("/");
   };
 
   return (
@@ -67,6 +82,7 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             <NavLink href="/" label="Home" icon={<Compass className="w-4 h-4" />} />
+            <NavLink href="/destinations" label="Destinations" icon={<MapPin className="w-4 h-4" />} />
             
             {isLoggedIn ? (
               <>
@@ -113,6 +129,7 @@ const Navbar = () => {
           <div className="md:hidden bg-white border-t border-gray-200 py-4">
             <div className="space-y-2">
               <MobileNavLink href="/" label="Home" icon={<Compass className="w-4 h-4" />} />
+              <MobileNavLink href="/destinations" label="Destinations" icon={<MapPin className="w-4 h-4" />} />
               
               {isLoggedIn ? (
                 <>
