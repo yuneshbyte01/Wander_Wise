@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Heart } from 'lucide-react';
 
-export default function WishlistButton({ destinationId, className = "" }) {
+export default function WishlistButton({ destinationId, className = "", onWishlistChange }) {
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -73,9 +73,27 @@ export default function WishlistButton({ destinationId, className = "" }) {
       if (response.ok) {
         setIsInWishlist(!isInWishlist);
         window.dispatchEvent(new Event('wishlistChange'));
+        if (onWishlistChange) {
+          onWishlistChange({
+            action: method === "POST" ? "add" : "remove",
+            destinationId,
+            undo: async () => {
+              // Undo the last action
+              await toggleWishlist();
+            }
+          });
+        }
       } else {
-        const errorResponse = await response.json();
-        console.error("Failed to toggle wishlist:", errorResponse.message);
+        let errorMessage = "Failed to toggle wishlist";
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorResponse = await response.json();
+          errorMessage = errorResponse.message || errorMessage;
+        } else {
+          const text = await response.text();
+          errorMessage = text || errorMessage;
+        }
+        console.error(errorMessage);
       }
     } catch (error) {
       console.error("Error toggling wishlist:", error);

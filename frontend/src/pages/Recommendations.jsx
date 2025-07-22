@@ -8,6 +8,7 @@ import {
   MapPin
 } from "lucide-react";
 import WishlistButton from '../components/WishlistButton';
+import Toast from '../components/Toast';
 
 export default function Recommendations() {
   const [recommendations, setRecommendations] = useState([]);
@@ -283,18 +284,19 @@ export default function Recommendations() {
                 rank={index + 1}
                 getMatchScoreColor={getMatchScoreColor}
                 getMatchScoreIcon={getMatchScoreIcon}
+                handleWishlistChange={handleWishlistChange}
               />
             ))}
           </div>
         )}
       </div>
       {/* Toast Notification */}
-      {toast && <Toast {...toast} />}
+      {toast && < Toast {...toast} />}
     </div>
   );
 }
 
-const RecommendationCard = ({ recommendation, rank, getMatchScoreColor, getMatchScoreIcon }) => {
+const RecommendationCard = ({ recommendation, rank, getMatchScoreColor, getMatchScoreIcon, handleWishlistChange }) => {
   const tags = recommendation.tags ? recommendation.tags.split(',').map(tag => tag.trim()) : [];
 
   return (
@@ -311,6 +313,7 @@ const RecommendationCard = ({ recommendation, rank, getMatchScoreColor, getMatch
         <WishlistButton 
           destinationId={recommendation.id}
           className="bg-white/20 backdrop-blur-sm p-2 rounded-full hover:bg-white/30 transition-colors"
+          onWishlistChange={handleWishlistChange}
         />
       </div>
 
