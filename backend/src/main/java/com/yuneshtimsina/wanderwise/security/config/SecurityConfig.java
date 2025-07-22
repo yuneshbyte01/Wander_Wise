@@ -1,10 +1,9 @@
 package com.yuneshtimsina.wanderwise.security.config;
 
-import com.yuneshtimsina.wanderwise.security.jwt.JwtAuthenticationFilter;
-import com.yuneshtimsina.wanderwise.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
-import org.springframework.security.authentication.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +14,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.yuneshtimsina.wanderwise.security.CustomUserDetailsService;
+import com.yuneshtimsina.wanderwise.security.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -66,10 +68,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:3000"); // React default port
-        config.addAllowedOrigin("http://localhost:3001"); // Your React port
-        config.addAllowedOrigin("http://127.0.0.1:3000");
-        config.addAllowedOrigin("http://127.0.0.1:3001");
+        // Add your production URLs
+        config.addAllowedOrigin("https://wander-wise-alpha.vercel.app");
+        // Keep localhost for development
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://localhost:3001");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);

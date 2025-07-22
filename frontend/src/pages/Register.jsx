@@ -12,6 +12,7 @@ import {
   Calendar,
   Globe
 } from "lucide-react";
+import { getApiUrl } from '../config/api';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -36,7 +37,7 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/register", {
+      const res = await fetch(getApiUrl("/api/auth/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

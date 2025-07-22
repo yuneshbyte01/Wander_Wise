@@ -9,6 +9,7 @@ import {
   Sparkles
 } from "lucide-react";
 import WishlistButton from '../components/WishlistButton';
+import { getApiUrl } from '../config/api';
 
 export default function Destinations() {
   const [destinations, setDestinations] = useState([]);
@@ -22,7 +23,7 @@ export default function Destinations() {
 
   const fetchDestinations = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/destinations');
+      const response = await fetch(getApiUrl('/api/destinations'));
       if (response.ok) {
         const data = await response.json();
         setDestinations(data);

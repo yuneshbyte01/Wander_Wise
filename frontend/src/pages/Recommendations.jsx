@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import WishlistButton from '../components/WishlistButton';
 import Toast from '../components/Toast';
+import { getApiUrl } from '../config/api';
 
 export default function Recommendations() {
   const [recommendations, setRecommendations] = useState([]);
@@ -38,7 +39,7 @@ export default function Recommendations() {
 
   const fetchRecommendations = async (userId, token) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/recommendations/${userId}`, {
+      const response = await fetch(getApiUrl(`/api/recommendations/${userId}`), {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"

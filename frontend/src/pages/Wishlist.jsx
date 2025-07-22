@@ -11,6 +11,7 @@ import {
   Mountain,
   AlertTriangle
 } from "lucide-react";
+import { getApiUrl } from '../config/api';
 
 export default function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
@@ -30,7 +31,7 @@ export default function Wishlist() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/wishlist/${userId}`, {
+      const response = await fetch(getApiUrl(`/api/wishlist/${userId}`), {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -84,7 +85,7 @@ export default function Wishlist() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/wishlist/${userId}/${destinationId}`, {
+      const response = await fetch(getApiUrl(`/api/wishlist/${userId}/${destinationId}`), {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -111,7 +112,7 @@ export default function Wishlist() {
 
     setIsClearing(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/wishlist/${userId}/clear`, {
+      const response = await fetch(getApiUrl(`/api/wishlist/${userId}/clear`), {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

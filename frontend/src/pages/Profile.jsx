@@ -17,6 +17,7 @@ import {
   Eye,
   EyeOff
 } from "lucide-react";
+import { getApiUrl } from '../config/api';
 
 export default function Profile() {
   const [userData, setUserData] = useState({
@@ -51,7 +52,7 @@ export default function Profile() {
 
   const fetchUserProfile = async (userId, token) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+      const response = await fetch(getApiUrl(`/api/users/${userId}`), {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -97,7 +98,7 @@ export default function Profile() {
       const userId = localStorage.getItem("userId");
 
       try {
-        const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        const response = await fetch(getApiUrl(`/api/users/${userId}`), {
           method: "PUT",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -215,7 +216,7 @@ export default function Profile() {
       const userId = localStorage.getItem("userId");
 
       try {
-        const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        const response = await fetch(getApiUrl(`/api/users/${userId}`), {
           method: "PUT",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -362,7 +363,7 @@ export default function Profile() {
       const userId = localStorage.getItem("userId");
 
       try {
-        const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        const response = await fetch(getApiUrl(`/api/users/${userId}`), {
           method: "PUT",
           headers: {
             "Authorization": `Bearer ${token}`,

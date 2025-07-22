@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Heart } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 export default function WishlistButton({ destinationId, className = "", onWishlistChange }) {
   const [isInWishlist, setIsInWishlist] = useState(false);
@@ -15,7 +16,7 @@ export default function WishlistButton({ destinationId, className = "", onWishli
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/wishlist/${userId}/check/${destinationId}`, {
+      const response = await fetch(getApiUrl(`/api/wishlist/${userId}/check/${destinationId}`), {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -62,7 +63,7 @@ export default function WishlistButton({ destinationId, className = "", onWishli
 
     try {
       const method = isInWishlist ? "DELETE" : "POST";
-      const response = await fetch(`http://localhost:8080/api/wishlist/${userId}/${destinationId}`, {
+      const response = await fetch(getApiUrl(`/api/wishlist/${userId}/${destinationId}`), {
         method,
         headers: {
           "Authorization": `Bearer ${token}`,
