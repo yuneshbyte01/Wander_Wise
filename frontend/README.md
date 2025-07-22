@@ -1,6 +1,5 @@
 ## 📁 **Frontend README.md**
 
-```markdown:frontend/README.md
 # 🏔️ Wander Wise - Frontend Application
 
 React.js frontend application for the Wander Wise travel recommendation platform.
