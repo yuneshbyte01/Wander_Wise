@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: wanderwise-backend
-    env: java
-    buildCommand: ./backend/mvnw clean package
-    startCommand: java -jar backend/target/*.jar
-    rootDir: .
-    plan: free
