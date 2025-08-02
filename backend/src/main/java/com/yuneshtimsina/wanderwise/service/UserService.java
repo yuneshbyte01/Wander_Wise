@@ -1,15 +1,18 @@
 package com.yuneshtimsina.wanderwise.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.yuneshtimsina.wanderwise.dto.UserRequestDTO;
 import com.yuneshtimsina.wanderwise.dto.UserResponseDTO;
 import com.yuneshtimsina.wanderwise.model.User;
 import com.yuneshtimsina.wanderwise.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import com.yuneshtimsina.wanderwise.repository.WishlistRepository;
 
 @Service
 public class UserService {
@@ -18,26 +21,10 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private WishlistRepository wishlistRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
-
-
-    public UserResponseDTO registerUser(UserRequestDTO dto) {
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email already in use.");
-        }
-
-        User user = User.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .password(dto.getPassword()) // Will encrypt in Mission 5
-                .interests(dto.getInterests())
-                .budget(dto.getBudget())
-                .preferredSeason(dto.getPreferredSeason())
-                .build();
-
-        User saved = userRepository.save(user);
-        return mapToResponse(saved);
-    }
 
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll()
@@ -68,11 +55,24 @@ public class UserService {
         return mapToResponse(updated);
     }
 
+    @Transactional
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        
+        // First delete all wishlist items for this user
+        wishlistRepository.deleteByUserId(id);
+        
+        // Then delete the user
+        userRepository.delete(user);
+    }
+
     private UserResponseDTO mapToResponse(User user) {
         return UserResponseDTO.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .role(user.getRole().name())
                 .interests(user.getInterests())
                 .budget(user.getBudget())
                 .preferredSeason(user.getPreferredSeason())

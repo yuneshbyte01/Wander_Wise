@@ -42,10 +42,16 @@ export default function Login() {
       localStorage.setItem("userName", data.name);
       localStorage.setItem("role", data.role);
 
+      console.log("Logged in role:", data.role);
+
       // Dispatch custom event to notify Navbar
       window.dispatchEvent(new Event('authChange'));
 
-      navigate("/recommendations");
+      if (data.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/recommendations");
+      }
     } catch (err) {
       setError(err.message);
     } finally {

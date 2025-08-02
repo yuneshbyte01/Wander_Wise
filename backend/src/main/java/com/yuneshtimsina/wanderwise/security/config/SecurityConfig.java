@@ -46,6 +46,7 @@ public class SecurityConfig {
                             "/favicon.ico"
                     ).permitAll()
                     .requestMatchers("/api/**").authenticated()
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .anyRequest().permitAll()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

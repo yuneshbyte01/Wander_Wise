@@ -1,8 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Home, AlertCircle } from 'lucide-react';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
+import AdminLayout from './layouts/AdminLayout';
+import UserLayout from './layouts/UserLayout';
+
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -10,70 +11,131 @@ import Recommendations from './pages/Recommendations';
 import Destinations from './pages/Destinations';
 import Profile from './pages/Profile';
 import Wishlist from './pages/Wishlist';
+import AdminDashboard from './pages/AdminDashboard';
+import NotFoundPage from './pages/NotFoundPage';
+
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  return (
-    <Router>
-      <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-        <Navbar />
-        <main className="flex-grow pt-16">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/destinations" element={<Destinations />} />
-            
-            {/* Protected Routes */}
-            <Route
-              path="/recommendations"
-              element={
-                <ProtectedRoute>
-                  <Recommendations />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/wishlist"
-              element={
-                <ProtectedRoute>
-                  <Wishlist />
-                </ProtectedRoute>
-              }
-            />
-            
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
-  );
-}
+    return (
+        <Router>
+            <Routes>
+                {/* Admin Routes */}
+                <Route
+                    path="/admin/dashboard"
+                    element={
+                        <ProtectedRoute adminOnly={true}>
+                            <AdminLayout>
+                                <AdminDashboard initialTab="dashboard" />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/users"
+                    element={
+                        <ProtectedRoute adminOnly={true}>
+                            <AdminLayout>
+                                <AdminDashboard initialTab="users" />
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/profile"
+                    element={
+                        <ProtectedRoute adminOnly={true}>
+                            <AdminLayout>
+                                {/* Replace with your actual admin profile page/component */}
+                                <div className="p-8">Admin Profile Page</div>
+                            </AdminLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                {/* Redirect /admin to /admin/dashboard */}
+                <Route
+                    path="/admin"
+                    element={<Navigate to="/admin/dashboard" replace />}
+                />
 
-const NotFoundPage = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <AlertCircle className="w-24 h-24 text-gray-400 mx-auto mb-6" />
-      <h1 className="text-6xl font-black text-gray-900 mb-4">404</h1>
-      <p className="text-xl text-gray-600 mb-8 font-medium">Page not found</p>
-      <a 
-        href="/" 
-        className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-      >
-        <Home className="w-4 h-4 mr-2" />
-        Go Home
-      </a>
-    </div>
-  </div>
-);
+                {/* Public/User Routes */}
+                <Route
+                    path="/"
+                    element={
+                        <UserLayout>
+                            <HomePage />
+                        </UserLayout>
+                    }
+                />
+                <Route
+                    path="/login"
+                    element={
+                        <UserLayout>
+                            <Login />
+                        </UserLayout>
+                    }
+                />
+                <Route
+                    path="/register"
+                    element={
+                        <UserLayout>
+                            <Register />
+                        </UserLayout>
+                    }
+                />
+                <Route
+                    path="/destinations"
+                    element={
+                        <UserLayout>
+                            <Destinations />
+                        </UserLayout>
+                    }
+                />
+
+                {/* Protected User Routes */}
+                <Route
+                    path="/recommendations"
+                    element={
+                        <ProtectedRoute>
+                            <UserLayout>
+                                <Recommendations />
+                            </UserLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute>
+                            <UserLayout>
+                                <Profile />
+                            </UserLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/wishlist"
+                    element={
+                        <ProtectedRoute>
+                            <UserLayout>
+                                <Wishlist />
+                            </UserLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Catch-all Not Found Route */}
+                <Route
+                    path="*"
+                    element={
+                        <UserLayout>
+                            <NotFoundPage />
+                        </UserLayout>
+                    }
+                />
+            </Routes>
+        </Router>
+    );
+}
 
 export default App;
